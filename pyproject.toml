@@ -1,0 +1,12 @@
+[project]
+name = "hypergraph-research"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "hypernetx>=2.4.3",
+    "matplotlib>=3.11.1",
+    "numpy>=2.5.1",
+    "xgi>=0.10.2",
+]
