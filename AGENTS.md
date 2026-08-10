@@ -60,6 +60,25 @@ Use a canonical incidence snapshot for conversions. It must represent nodes,
 hyperedges, and incidences separately so that isolated nodes and empty
 hyperedges are not lost. Add optional metadata only for concrete use cases.
 
+### Views and materialization
+
+Adapters and facades must be `O(1)` to construct, zero-copy live wrappers. Their
+construction must not traverse, copy, snapshot, or materialize the underlying
+hypergraph. Individual operations may derive data or allocate required result
+containers, but must document meaningful time, memory, and snapshot-versus-view
+behavior.
+
+Never silently materialize a concrete target object as a fallback for an
+unsupported facade operation. Raise a specific unsupported-operation error
+instead. Full conversions must be explicit in the API and clearly named, such
+as `materialize_xgi` or `materialize_hypernetx`. An explicit conversion must
+document that it creates an independent object, its complexity, its identity
+and ordering guarantees, and every required loss policy.
+
+Use `Adapter`, `Facade`, `View`, or `as_*` for live zero-copy wrappers. Reserve
+`to_*`, `convert_*`, or `materialize_*` for operations that allocate an
+independent concrete representation.
+
 ## Python standards
 
 - Target CPython according to `requires-python` in `pyproject.toml`; other
@@ -68,6 +87,14 @@ hyperedges are not lost. Add optional metadata only for concrete use cases.
   isolate unavoidable `Any` at third-party boundaries and narrow it promptly.
 - Use `typing.Protocol`, generic node and hyperedge ID parameters, and
   `collections.abc` collection types. Prefer composition of narrow protocols.
+- Project-owned adapters must explicitly inherit the canonical capability
+  protocol they promise. Project-owned facades and their views must explicitly
+  inherit narrow project-owned protocols for the supported target API; never
+  inherit a third-party concrete hypergraph class.
+- Mark required protocol members with `@abstractmethod` so an incomplete
+  explicit implementation cannot be instantiated. Mark implementation members
+  with `@override` so the strict type checker verifies names and signatures.
+  External implementations may continue to satisfy protocols structurally.
 - Do not use `@runtime_checkable` unless runtime structural checks are actually
   required.
 - Raise specific exceptions for invalid external data. Do not use `assert` for
@@ -99,7 +126,7 @@ Before handing off a normal Python change, run the relevant subset of:
 uv run ruff format --check .
 uv run ruff check .
 uv run pytest
-uv run <configured-type-checker>
+uv run basedpyright
 ```
 
 Every adapter and facade should share semantic conformance tests covering at
