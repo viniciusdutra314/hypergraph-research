@@ -1,12 +1,10 @@
 import itertools
 import random
-from bisect import bisect_left
 
 import networkx as nx
-import numpy as np
 
 
-def create_SBM(partitions_sizes: list[int], prob_matrix: list[list[float]]) -> nx.Graph:
+def simple_SBM(partitions_sizes: list[int], prob_matrix: list[list[float]]) -> nx.Graph:
     g: nx.Graph = nx.empty_graph(sum(partitions_sizes))
     num_blocks = len(partitions_sizes)
     cumulative_sum = [0, *itertools.accumulate(partitions_sizes)]
@@ -32,3 +30,23 @@ def create_SBM(partitions_sizes: list[int], prob_matrix: list[list[float]]) -> n
             if probability > random.random():
                 g.add_edge(s, t)
     return g
+
+
+def main():
+    g = simple_SBM(
+        [15, 15, 15, 15],
+        [
+            [0.45, 0.08, 0.01, 0.08],
+            [0.08, 0.45, 0.08, 0.01],
+            [0.01, 0.08, 0.45, 0.08],
+            [0.08, 0.01, 0.08, 0.45],
+        ],
+    )
+    import matplotlib.pyplot as plt
+
+    nx.draw(g, with_labels=True)
+    plt.show()
+
+
+if __name__ == "__main__":
+    main()
