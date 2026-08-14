@@ -1,7 +1,9 @@
 import itertools
 import random
 
+import matplotlib.pyplot as plt
 import networkx as nx
+import xgi
 
 
 def simple_SBM(partitions_sizes: list[int], prob_matrix: list[list[float]]) -> nx.Graph:
@@ -32,6 +34,23 @@ def simple_SBM(partitions_sizes: list[int], prob_matrix: list[list[float]]) -> n
     return g
 
 
+def d_HSBM(
+    partitions_size: list[int], d: int, probability_map: dict[tuple[int, ...], float]
+) -> xgi.Hypergraph:
+    h = xgi.Hypergraph()
+    cumulative_sum = [0, *itertools.accumulate(partitions_size)]
+    for blocks in itertools.combinations_with_replacement(
+        range(len(partitions_size)), d
+    ):
+        nodes_ranges = [
+            range(cumulative_sum[block], cumulative_sum[block + 1]) for block in blocks
+        ]
+        for edge in itertools.product(*nodes_ranges):
+            if random.random() < probability_map[blocks]:
+                h.add_edge(edge)
+    return h
+
+
 def main():
     g = simple_SBM(
         [15, 15, 15, 15],
@@ -42,7 +61,6 @@ def main():
             [0.08, 0.01, 0.08, 0.45],
         ],
     )
-    import matplotlib.pyplot as plt
 
     nx.draw(g, with_labels=True)
     plt.show()
