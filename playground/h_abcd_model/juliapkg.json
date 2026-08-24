@@ -1,0 +1,14 @@
+{
+  "julia": "1.12",
+  "packages": {
+    "ABCDHypergraphGenerator": {
+      "uuid": "5511a52e-cd54-480d-8a91-67a5490c1428",
+      "url": "https://github.com/bkamins/ABCDHypergraphGenerator.jl.git",
+      "rev": "d70a2d3a6490fce9b12439c4d4bfe1a054725f8b"
+    },
+    "SimpleHypergraphs": {
+      "uuid": "aa4a32ff-dd5d-5357-90e3-e7a9512f0501",
+      "version": "=0.4.0"
+    }
+  }
+}
