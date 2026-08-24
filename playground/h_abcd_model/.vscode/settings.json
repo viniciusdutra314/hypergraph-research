@@ -1,3 +1,5 @@
 {
-    "julia.environmentPath": "/home/vinicius/github/hypergraph-research/playground/h_abcd_model/.venv/julia_env"
+    "julia.environmentPath": "/home/vinicius/github/hypergraph-research/.venv/julia_env",
+    "python.defaultInterpreterPath": "/home/vinicius/github/hypergraph-research/.venv/bin/python",
+    "python.analysis.typeCheckingMode": "off"
 }

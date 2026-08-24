@@ -1,39 +1,28 @@
+"""Interoperability tools for the Python hypergraph ecosystem."""
+
+import importlib.util
 import sys
-import time
-import warnings
-from pathlib import Path
-from string.templatelib import convert
 from typing import cast
 
-import hypergraphx as hgx
-import hypernetx as hnx
-import matplotlib.pyplot as plt
-import networkx
-import numpy as np
+import hypergraphx as hgx  # pyright: ignore[reportMissingTypeStubs]
+import hypernetx as hnx  # pyright: ignore[reportMissingTypeStubs]
 import xgi
-from matplotlib.axes import Axes
-
-CACHE_DIR = Path(__file__).parent / ".cache" / "xgi"
 
 
-def load_hypergraph(dataset: str) -> xgi.Hypergraph:
-    CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    cache_file = CACHE_DIR / f"{dataset}.json"
+def _lazy_import(name: str):  # taken from python docs and correctly typed
+    spec = importlib.util.find_spec(name)
+    assert spec is not None
+    spec_loader = spec.loader
+    assert spec_loader is not None
+    loader = importlib.util.LazyLoader(spec_loader)
+    spec.loader = loader
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    loader.exec_module(module)
+    return module
 
-    if not cache_file.exists():
-        xgi.download_xgi_data(dataset, path=str(CACHE_DIR))
 
-    # warning interno da lib desnecessário
-    with warnings.catch_warnings():
-        warnings.filterwarnings("ignore")
-        hypergraph = xgi.load_xgi_data(
-            dataset,
-            read=True,
-            path=str(CACHE_DIR),
-            cache=False,
-        )
-        assert isinstance(hypergraph, xgi.Hypergraph)
-        return hypergraph
+juliacall = _lazy_import("juliacall")
 
 
 def convert_hypergraph[
@@ -62,12 +51,3 @@ def convert_hypergraph[
             f"HIF conversion produced {type(converted)!r}, expected {desired_type!r}"
         )
     return cast(T, converted)
-
-
-def main() -> None:
-    h = load_hypergraph("physics-cocitations")
-    h2 = convert_hypergraph(h, hnx.Hypergraph)
-
-
-if __name__ == "__main__":
-    main()

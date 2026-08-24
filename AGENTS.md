@@ -106,6 +106,33 @@ not rely on the GIL to protect Rust or binding state. Document whether exposed
 objects support concurrent reads or mutations, and detach from Python while
 performing long Rust-only computations when appropriate.
 
+## Python-Julia interoperability
+
+Julia interoperability exists to call external research code from Python, not
+to develop a separate Julia implementation in this repository. Treat the
+external Julia package or paper implementation as the source of truth.
+
+- Put the typed Python wrapper in `<name>.py` and call its public functions the
+  same names as the Julia functions whenever practical.
+- Put JuliaCall objects in private names such as `_jl` and `_julia_module`.
+  Isolate unavoidable `Any` there and give every public Python function a
+  precise signature and return type.
+- Define the shared JuliaCall `LazyLoader` in `hyperglue.__init__`. Importing
+  HyperGlue must not start Julia. Julia-backed modules consume that shared lazy
+  module; do not add per-integration import loaders or function caches.
+- Convert values explicitly at the boundary, such as Python sequences to Julia
+  vectors, Python strings to Julia symbols, and returned Julia scalars to Python
+  values.
+- Add `<name>_bridge.jl` only when a small Julia adapter is required to call or
+  reshape the external code. Do not reimplement its algorithms. Use
+  `juliapkg.json` to declare and pin the external Julia dependencies.
+- In Julia bridge implementations, prefer explicitly named keyword arguments
+  when the called API supports them, especially when positional parameters are
+  easy to confuse. Do not add a helper or wrapper solely to turn positional
+  arguments into named arguments.
+- Keep reusable wrappers out of `main.py`; use `main.py` only for an example or
+  executable entry point.
+
 ## Tooling
 
 Use `uv` for all Python environments, dependencies, and commands. Treat

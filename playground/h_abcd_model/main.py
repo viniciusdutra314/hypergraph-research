@@ -1,26 +1,37 @@
-# pyright: reportAny=false, reportExplicitAny=false, reportMissingImports=false, reportMissingTypeStubs=false, reportUnknownMemberType=false, reportUnnecessaryCast=false
-
-from pathlib import Path
-from typing import Any, cast
-
-import juliacall
-
-jl = cast(Any, juliacall.newmodule("HABCD"))
-h_abcd = cast(Any, jl.include(str(Path(__file__).with_name("h_wrapper_abcd.jl"))))
+from hyperglue.generators.h_abcd import (
+    generate_h_abcd,
+    hypergraph_type,
+    number_of_hyperedges,
+    number_of_vertices,
+    vertices_in_hyperedge,
+)
 
 
 def main() -> None:
-    generated = h_abcd.generate_h_abcd()
+    generated = generate_h_abcd(
+        n=100,
+        degree_exponent=2.5,
+        minimum_degree=5,
+        maximum_degree=20,
+        community_exponent=1.5,
+        minimum_community_size=10,
+        maximum_community_size=30,
+        mixing=0.3,
+        hyperedge_size_weights=[0.0, 0.4, 0.3, 0.2, 0.1],
+        composition="linear",
+        seed=1234,
+        maximum_iterations=100,
+    )
     hypergraph = generated.hypergraph
     communities = generated.communities
 
-    print("Hypergraph type:", jl.typeof(hypergraph))
-    print("Number of vertices:", h_abcd.SimpleHypergraphs.nhv(hypergraph))
-    print("Number of hyperedges:", h_abcd.SimpleHypergraphs.nhe(hypergraph))
-    print("Number of communities:", len(set(map(int, communities))))
+    print("Hypergraph type:", hypergraph_type(hypergraph))
+    print("Number of vertices:", number_of_vertices(hypergraph))
+    print("Number of hyperedges:", number_of_hyperedges(hypergraph))
+    print("Number of communities:", len(set(communities)))
     print(
         "Vertices in hyperedge 1:",
-        list(h_abcd.vertices_in_hyperedge(hypergraph, 1)),
+        vertices_in_hyperedge(hypergraph, 1),
     )
 
 

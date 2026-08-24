@@ -3,7 +3,16 @@ name = "h-abcd-model"
 version = "0.1.0"
 requires-python = ">=3.14"
 dependencies = [
-    "juliacall>=0.9.35",
-    "juliapkg[cli]>=0.1.26",
+    "hyperglue",
     "matplotlib>=3.11.1",
+]
+
+[tool.uv.sources]
+hyperglue = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.39.10",
+    "pytest>=9.1.1",
+    "ruff>=0.16.4",
 ]

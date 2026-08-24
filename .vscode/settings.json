@@ -1,0 +1,6 @@
+{
+    "python.analysis.typeCheckingMode": "off",
+    "python.defaultInterpreterPath": "/home/vinicius/github/hypergraph-research/.venv/bin/python",
+    "julia.environmentPath": "/home/vinicius/github/hypergraph-research/.venv/julia_env",
+    "python-envs.defaultEnvManager": "ms-python.python:system"
+}

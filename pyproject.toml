@@ -1,28 +1,5 @@
-[project]
-name = "hypergraph-research"
-version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
-requires-python = ">=3.14"
-dependencies = [
-    "hypergraphx",
-    "hypernetx>=2.4.3",
-    "matplotlib>=3.11.1",
-    "networkx>=3.6.1",
-    "numpy>=2.5.1",
-    "pyside6>=6.11.1",
-    "xgi>=0.10.2",
+[tool.uv.workspace]
+members = [
+    "hyperglue",
+    "playground/h_abcd_model",
 ]
-
-[dependency-groups]
-dev = [
-    "basedpyright>=1.39.9",
-    "pytest>=9.1.1",
-    "ruff>=0.16.2",
-]
-
-[tool.pytest.ini_options]
-pythonpath = ["."]
-
-[tool.uv.sources]
-hypergraphx = { git = "https://github.com/viniciusdutra314/hypergraphx", branch = "hif_refactor" }
